@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="/static/css_files/cart.css">
+
+    <script>
+        function showSpinnerAndRedirect(event) {
+            event.preventDefault();
+            let selectedItems = [];
+
+            document.querySelectorAll(".cart-item").forEach((item) => {
+                let checkbox = item.querySelector(".item-checkbox");
+                if (checkbox.checked) {
+                    let productId = item.querySelector("input[name='product_id']").value;
+                    let quantity = item.querySelector(".quantity-input").value;
+                    selectedItems.push({ id: productId, qty: quantity });
+                }
+            });
+
+            if (selectedItems.length === 0) {
+                alert("Please select at least one product to proceed!");
+                return;
+            }
+
+            document.getElementById("loading").style.display = "flex";
+
+            setTimeout(function () {
+                document.getElementById("loading").style.display = "none";
+                let params = new URLSearchParams();
+                selectedItems.forEach(item => {
+                    params.append("selected_items", item.id);
+                    params.append("quantities", item.qty);
+                });
+                window.location.href = `{% url 'checkout' %}?${params.toString()}`;
+            }, 2000);
+        }
+
+        function updateTotal() {
+            let total = 0;
+            let totalItems = 0;
+
+            document.querySelectorAll(".cart-item").forEach((item) => {
+                let checkbox = item.querySelector(".item-checkbox");
+                if (checkbox.checked) {
+                    let price = parseFloat(item.querySelector(".item-price").innerText.replace("₹", ""));
+                    let quantity = parseInt(item.querySelector(".quantity-input").value);
+                    total += price * quantity;
+                    totalItems += quantity;
+                }
+            });
+
+            let tax = total * 0.10;
+            let grandTotal = total + tax;
+
+            document.getElementById("total-items").innerText = totalItems;
+            document.getElementById("subtotal-price").innerText = "₹" + total.toFixed(2);
+            document.getElementById("tax-amount").innerText = "₹" + tax.toFixed(2);
+            document.getElementById("total-price").innerText = "₹" + grandTotal.toFixed(2);
+        }
+
+        window.onload = function () {
+            updateTotal();
+        };
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Your Shopping Cart</h1>
+    </header>
+
+    <div class="cart-container">
+        {% if cart_items %}
+        <div class="cart-items">
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <input type="checkbox" class="item-checkbox" onchange="updateTotal()">
+                <img src="/media/{{ item.3 }}" alt="{{ item.0 }}" onerror="this.src='/static/default.png'">
+                <div class="item-details">
+                    <h3>{{ item.0 }}</h3>
+                    <p class="item-price">₹{{ item.1 }}</p>
+                    <label>Quantity:</label>
+                    <input type="number" class="quantity-input" value="1" min="1" onchange="updateTotal()">
+                    <form action="{% url 'remove_from_cart' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ item.4 }}">
+                        <button type="submit" class="remove-btn">Remove</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Side - Summary -->
+        <div class="cart-summary">
+            <h2>Cart Summary</h2>
+            <p>Total Items: <span id="total-items">0</span></p>
+            <p>Subtotal: <span id="subtotal-price">₹0.00</span></p>
+            <p>Tax (10%): <span id="tax-amount">₹0.00</span></p>
+            <p class="total-amount">Total: <span id="total-price">₹0.00</span></p>
+            <button class="checkout-btn" onclick="showSpinnerAndRedirect(event)">Proceed to Checkout</button>
+        </div>
+        {% else %}
+        <p>Your cart is empty.</p>
+        {% endif %}
+    </div>
+
+    <!-- Loading Animation -->
+    <div id="loading" style="display:none;">
+        <div class="spinner"></div>
+        <p>Processing your order...</p>
+    </div>
+</body>
+
+</html>

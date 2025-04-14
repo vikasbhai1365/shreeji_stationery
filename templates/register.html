@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Create Your Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --dark: #212529;
+      --light: #f8f9fa;
+      --success: #4bb543;
+      --error: #ff3333;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-header::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-header::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .form-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      font-weight: 300;
+      position: relative;
+      z-index: 2;
+    }
+
+    .form-container {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-label {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      color: #999;
+      font-size: 1rem;
+      transition: var(--transition);
+      pointer-events: none;
+      background: white;
+      padding: 0 5px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+      background: transparent;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    .form-input:focus+.form-label,
+    .form-input:not(:placeholder-shown)+.form-label {
+      top: -10px;
+      left: 10px;
+      font-size: 0.8rem;
+      color: var(--primary);
+      background: white;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      color: #999;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn i {
+      font-size: 1.2rem;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .form-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .form-footer a:hover {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+
+    .messages {
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .error {
+      background: rgba(255, 51, 51, 0.1);
+      color: var(--error);
+      border-left: 4px solid var(--error);
+    }
+
+    .success {
+      background: rgba(75, 181, 67, 0.1);
+      color: var(--success);
+      border-left: 4px solid var(--success);
+    }
+
+    .message i {
+      font-size: 1.2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 576px) {
+      .container {
+        max-width: 100%;
+      }
+
+      .form-header {
+        padding: 1.5rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+      }
+
+      .form-container {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .form-header {
+        padding: 1.2rem;
+      }
+
+      .form-title {
+        font-size: 1.3rem;
+      }
+
+      .form-input {
+        padding: 12px;
+      }
+
+      .btn {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="form-header">
+      <h1 class="form-title">Create Account</h1>
+      <p class="form-subtitle">Join our community today</p>
+    </div>
+
+    <div class="form-container">
+      <form id="register-form" action="" method="POST">
+        {% csrf_token %}
+
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="message {% if message.tags %}{{ message.tags }}{% else %}error{% endif %}">
+            <i
+              class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+          <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
+          <label for="name" class="form-label">Full Name</label>
+        </div>
+
+        <div class="form-group">
+          <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
+          <label for="email" class="form-label">Email Address</label>
+        </div>
+
+        <div class="form-group">
+          <input type="tel" id="phone_no" name="phone_no" class="form-input" placeholder=" " required>
+          <label for="phone_no" class="form-label">Phone Number</label>
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="address" name="address" class="form-input" placeholder=" " required>
+          <label for="address" class="form-label">Address</label>
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="username" name="username" class="form-input" placeholder=" " required>
+          <label for="username" class="form-label">Username</label>
+        </div>
+
+        <div class="form-group">
+          <input type="password" id="password" name="password" class="form-input" placeholder=" " required>
+          <label for="password" class="form-label">Password</label>
+          <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+        </div>
+
+        <div class="form-group">
+          <input type="password" id="confirm-password" name="confirm_password" class="form-input" placeholder=" "
+            required>
+          <label for="confirm-password" class="form-label">Confirm Password</label>
+          <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+        </div>
+
+        <button type="submit" class="btn">
+          <i class="fas fa-user-plus"></i> Register Now
+        </button>
+
+        <div class="form-footer">
+          Already have an account? <a href="{% url 'login' %}">Sign In</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm-password');
+
+    togglePassword.addEventListener('click', function () {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    toggleConfirmPassword.addEventListener('click', function () {
+      const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+      confirmPassword.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    // Form validation
+    document.getElementById('register-form').addEventListener('submit', function (e) {
+      if (password.value !== confirmPassword.value) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+        confirmPassword.focus();
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+<h1>Update Delivery Status for Order #{{ order_id }}</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="delivery_status">New Status:</label>
+    <select name="delivery_status" id="delivery_status">
+        <option value="Out for Delivery">Out for Delivery</option>
+        <option value="Delivered">Delivered</option>
+        <option value="Cancelled">Cancelled</option>
+    </select>
+    <button type="submit">Update</button>
+</form>

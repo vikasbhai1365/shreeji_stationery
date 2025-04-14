@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css_files/search_results.css" />
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Search Results for "{{ query }}"</h1>
+            <div class="header-actions">
+                <a href="{% url 'homepage' %}" class="home-link"><i class="fas fa-home"></i> Home</a>
+                <a href="{% url 'cart' %}" class="cart-link"><i class="fas fa-shopping-cart"></i> Cart</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="shop-container">
+        {% if products %}
+        {% for product in products %}
+        <div class="box">
+            <div class="box-content">
+                <div class="product-image-container">
+                    <img src="{{ product.3 }}" alt="{{ product.1 }}" class="box-image">
+                    <div class="quick-actions">
+                        <button class="quick-view"><i class="fas fa-eye"></i></button>
+                        <button class="wishlist"><i class="far fa-heart"></i></button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>{{ product.1 }}</h2>
+                    <p class="category"><strong>Category:</strong> {{ product.4 }}</p>
+                    <p class="brand"><strong>Brand:</strong> {{ product.5 }}</p>
+                    <p class="color"><strong>Color:</strong> {{ product.6 }}</p>
+                    {% if product.7 > 20 %}
+                    <p><i class="fas fa-check"></i> {{product.7}} pieces in stock</p>
+                    {% else %}
+                    <p class="low-alert">Only {{product.7}} pieces left - Order soon!</p>
+                    {% endif %}
+                    <div class="price-rating">
+                        <p class="price">₹{{ product.2 }}</p>
+                    </div>
+
+                    <div class="product-actions">
+                        <a href="#" class="add-to-cart-btn" data-product-id="{{ product.0 }}">
+                            <button class="add-to-cart"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-results">
+            <i class="fas fa-search"></i>
+            <p>No products found for "{{ query }}"</p>
+            <a href="{% url 'homepage' %}" class="continue-shopping">Continue Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        function updatePrice() {
+            const price = document.getElementById('price').value;
+            document.getElementById('priceValue').textContent = '₹' + price;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    let productId = this.getAttribute("data-product-id");
+
+                    fetch("{% url 'add_to_cart' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: "product_id=" + productId
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Create notification element
+                            const notification = document.createElement('div');
+                            notification.style.position = 'fixed';
+                            notification.style.bottom = '20px';
+                            notification.style.right = '20px';
+                            notification.style.backgroundColor = data.success ? '#2ecc71' : '#e74c3c';
+                            notification.style.color = 'white';
+                            notification.style.padding = '15px 20px';
+                            notification.style.borderRadius = '5px';
+                            notification.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
+                            notification.style.zIndex = '1000';
+                            notification.style.display = 'flex';
+                            notification.style.alignItems = 'center';
+                            notification.style.gap = '10px';
+                            notification.innerHTML = `
+                    <i class="fas ${data.success ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    ${data.message}
+                  `;
+
+                            document.body.appendChild(notification);
+
+                            // Remove notification after 3 seconds
+                            setTimeout(() => {
+                                notification.style.transition = 'opacity 0.5s';
+                                notification.style.opacity = '0';
+                                setTimeout(() => notification.remove(), 500);
+                            }, 3000);
+                        })
+                        .catch(error => console.error("Error:", error));
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

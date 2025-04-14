@@ -1,0 +1,163 @@
+{% extends 'staff_base.html' %}
+
+{% block title %}Order Management{% endblock %}
+
+{% block header %}Order Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-management-container {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .orders-table thead tr {
+        background-color: var(--primary-color);
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 15px;
+        text-align: center;
+        vertical-align: middle;
+        border-bottom: 1px solid #dddddd;
+    }
+
+    .orders-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .orders-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .orders-table tbody tr:nth-of-type(even) {
+        background-color: #f9f9f9;
+    }
+
+    .action-form {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .process-btn {
+        background-color: var(--success-color);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .process-btn:hover {
+        background-color: #218838;
+    }
+
+    .no-action {
+        color: var(--gray-color);
+        font-style: italic;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .back-link:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .orders-table {
+            font-size: 0.8em;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 10px 5px;
+        }
+
+        .action-form {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="order-management-container">
+    <div class="table-container">
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>User ID</th>
+                    <th>Total</th>
+                    <th>Order Status</th>
+                    <th>Delivery Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.0 }}</td>
+                    <td>{{ order.1 }}</td>
+                    <td>{{ order.2 }}</td>
+                    <td>${{ order.3 }}</td>
+                    <td>
+                        <span class="status-badge status-{{ order.4|lower }}">
+                            {{ order.4 }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ order.5|lower|cut:' ' }}">
+                            {{ order.5 }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if staff_role == 'Warehouse Manager' and order.4 == 'Pending' %}
+                        <form method="POST" class="action-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order.0 }}">
+                            <button type="submit" name="action" value="process" class="process-btn">
+                                Process Order
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="no-action">No actions available</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{% url 'staff_dashboard' %}" class="back-link">← Back to Dashboard</a>
+</div>
+{% endblock %}

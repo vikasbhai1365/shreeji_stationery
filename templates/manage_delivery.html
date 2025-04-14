@@ -1,0 +1,769 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+    <title>Shreeji Stationery - Manage Deliveries</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c786c;
+            --primary-light: #90d26d;
+            --secondary: #004445;
+            --accent: #f8b400;
+            --light: #faf5e4;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --dark: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: rgba(44, 120, 108, 0.05);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .status-shipped {
+            background-color: #e2d4f0;
+            color: #4a1a8c;
+        }
+
+        .status-out {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+
+        .status-delivered {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .form-control {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 120, 108, 0.2);
+        }
+
+        .form-inline {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--danger);
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .customer-name {
+            font-weight: 500;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .order-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .detail-group {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .detail-value {
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .items-table th {
+            background-color: #f1f1f1;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .items-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .form-inline {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+
+            .order-details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+    .table-title {
+        text-align: center;
+        color: var(--secondary);
+        margin-bottom: 25px;
+        font-size: 2rem;
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .table-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background-color: var(--accent);
+    }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="table-title">
+            <h1><i class="fas fa-truck"></i> Delivery Management</h1>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- <div class="search-bar">
+            <input type="text" class="form-control" placeholder="Search orders...">
+            <button class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+        </div> -->
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Order Status</th>
+                        <th>Delivery Status</th>
+                        <th>Staff</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><span class="order-id">#{{ order.order_id }}</span></td>
+                        <td><span class="customer-name">{{ order.customer_name }}</span></td>
+                        <td>{{ order.order_date }}</td>
+                        <td><span class="amount">₹{{ order.total_amount }}</span></td>
+                        <td>
+                            <span class="status status-{% if order.order_status == 'Pending' %}pending{% elif order.order_status == 'Processing' %}processing{% elif order.order_status == 'Shipped' %}shipped{% elif order.order_status == 'Delivered' %}delivered{% else %}cancelled{% endif %}">
+                                <i class="fas 
+                                    {% if order.order_status == 'Pending' %}fa-clock 
+                                    {% elif order.order_status == 'Processing' %}fa-cog 
+                                    {% elif order.order_status == 'Shipped' %}fa-shipping-fast 
+                                    {% elif order.order_status == 'Delivered' %}fa-check-circle 
+                                    {% else %}fa-times-circle{% endif %}"></i> 
+                                {{ order.order_status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status status-{% if order.delivery_status == 'Pending' %}pending{% elif order.delivery_status == 'Shipped' %}shipped{% elif order.delivery_status == 'Out for Delivery' %}out{% elif order.delivery_status == 'Delivered' %}delivered{% else %}cancelled{% endif %}">
+                                <i class="fas 
+                                    {% if order.delivery_status == 'Pending' %}fa-clock 
+                                    {% elif order.delivery_status == 'Shipped' %}fa-box 
+                                    {% elif order.delivery_status == 'Out for Delivery' %}fa-truck 
+                                    {% elif order.delivery_status == 'Delivered' %}fa-check-circle 
+                                    {% else %}fa-times-circle{% endif %}"></i> 
+                                {{ order.delivery_status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if order.staff_name %}
+                            <span class="badge"><i class="fas fa-user"></i> {{ order.staff_name }}</span>
+                            {% else %}
+                            <span class="badge">Not assigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if order.order_status == 'Pending' %}
+                                <form method="post" class="form-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                    <input type="hidden" name="action" value="process">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cog"></i> Process
+                                    </button>
+                                </form>
+                                {% elif order.order_status == 'Processing' %}
+                                <form method="post" class="form-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                    <input type="hidden" name="action" value="dispatch">
+                                    <select name="staff_id" class="form-control" required style="min-width: 150px;">
+                                        <option value="">Select Staff</option>
+                                        {% for staff in staff_list %}
+                                        <option value="{{ staff.id }}">{{ staff.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="text" name="delivery_address" value="{{ order.delivery_address }}" required placeholder="Delivery Address">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-paper-plane"></i> Dispatch
+                                    </button>
+                                </form>
+                                {% elif order.order_status == 'Shipped' or order.delivery_status == 'Out for Delivery' %}
+                                <form method="post" class="form-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                    <input type="hidden" name="action" value="update_status">
+                                    <select name="delivery_status" class="form-control" required style="min-width: 150px;">
+                                        <option value="">Update Status</option>
+                                        {% if order.delivery_status == 'Shipped' %}
+                                        <option value="Out for Delivery">Out for Delivery</option>
+                                        {% endif %}
+                                        {% if order.delivery_status != 'Delivered' %}
+                                        <option value="Delivered">Delivered</option>
+                                        {% endif %}
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-sync-alt"></i> Update
+                                    </button>
+                                </form>
+                                {% endif %}
+                                
+                                <button class="btn btn-sm" style="background-color: #e9ecef; color: #495057;" 
+                                    onclick="showOrderDetails('{{ order.order_id }}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-invoice"></i> Order Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="order-details-grid">
+                    <div>
+                        <div class="detail-group">
+                            <span class="detail-label">Order ID</span>
+                            <div class="detail-value" id="modal-order-id">#12345</div>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Customer Name</span>
+                            <div class="detail-value" id="modal-customer-name">John Doe</div>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Order Date</span>
+                            <div class="detail-value" id="modal-order-date">2023-06-15</div>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Customer Contact</span>
+                            <div class="detail-value" id="modal-customer-contact">+91 9876543210</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="detail-group">
+                            <span class="detail-label">Order Status</span>
+                            <div class="detail-value" id="modal-order-status"><span class="status status-delivered">Delivered</span></div>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Delivery Status</span>
+                            <div class="detail-value" id="modal-delivery-status"><span class="status status-delivered">Delivered</span></div>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Assigned Staff</span>
+                            <div class="detail-value" id="modal-staff-name">Rajesh Kumar</div>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Total Amount</span>
+                            <div class="detail-value" id="modal-total-amount">₹1,250.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label">Delivery Address</span>
+                    <div class="detail-value" id="modal-delivery-address">
+                        123 Stationery Lane, Office Complex, Near City Mall, Mumbai - 400001, Maharashtra
+                    </div>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label">Order Items</span>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-order-items">
+                            <!-- Items will be inserted here by JavaScript -->
+                            <tr>
+                                <td>Premium A4 Notebook</td>
+                                <td>2</td>
+                                <td>₹150.00</td>
+                                <td>₹300.00</td>
+                            </tr>
+                            <tr>
+                                <td>Ballpoint Pens (Pack of 10)</td>
+                                <td>1</td>
+                                <td>₹250.00</td>
+                                <td>₹250.00</td>
+                            </tr>
+                            <tr>
+                                <td>Sticky Notes</td>
+                                <td>5</td>
+                                <td>₹50.00</td>
+                                <td>₹250.00</td>
+                            </tr>
+                            <tr>
+                                <td>File Folders</td>
+                                <td>3</td>
+                                <td>₹150.00</td>
+                                <td>₹450.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label">Delivery Notes</span>
+                    <div class="detail-value" id="modal-delivery-notes">
+                        Customer requested delivery after 5 PM. Please call before arriving.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()" style="background-color: #f1f1f1;">Close</button>
+                <button class="btn btn-primary" onclick="printOrderDetails()"><i class="fas fa-print"></i> Print</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample order data (in a real app, this would come from your backend)
+        const ordersData = {
+            "12345": {
+                order_id: "12345",
+                customer_name: "John Doe",
+                customer_contact: "+91 9876543210",
+                order_date: "2023-06-15",
+                delivery_address: "123 Stationery Lane, Office Complex, Near City Mall, Mumbai - 400001, Maharashtra",
+                order_status: "Delivered",
+                delivery_status: "Delivered",
+                staff_name: "Rajesh Kumar",
+                total_amount: "1,250.00",
+                delivery_notes: "Customer requested delivery after 5 PM. Please call before arriving.",
+                items: [
+                    { name: "Premium A4 Notebook", quantity: 2, price: "150.00", total: "300.00" },
+                    { name: "Ballpoint Pens (Pack of 10)", quantity: 1, price: "250.00", total: "250.00" },
+                    { name: "Sticky Notes", quantity: 5, price: "50.00", total: "250.00" },
+                    { name: "File Folders", quantity: 3, price: "150.00", total: "450.00" }
+                ]
+            },
+            // Add more sample orders as needed
+        };
+
+        function showOrderDetails(orderId) {
+            // In a real app, you would fetch this data from your backend
+            // For this example, we're using the sample data above
+            const order = ordersData[orderId] || {
+                order_id: orderId,
+                customer_name: "Customer " + orderId,
+                customer_contact: "+91 XXXXXXX" + orderId.slice(-4),
+                order_date: "2023-06-" + (10 + parseInt(orderId.slice(-1))),
+                delivery_address: "Sample address for order " + orderId,
+                order_status: "Processing",
+                delivery_status: "Pending",
+                staff_name: "Staff Member",
+                total_amount: "1,000.00",
+                delivery_notes: "No special instructions",
+                items: [
+                    { name: "Sample Item 1", quantity: 1, price: "500.00", total: "500.00" },
+                    { name: "Sample Item 2", quantity: 2, price: "250.00", total: "500.00" }
+                ]
+            };
+
+            // Update modal with order data
+            document.getElementById('modal-order-id').textContent = '#' + order.order_id;
+            document.getElementById('modal-customer-name').textContent = order.customer_name;
+            document.getElementById('modal-order-date').textContent = order.order_date;
+            document.getElementById('modal-customer-contact').textContent = order.customer_contact;
+            document.getElementById('modal-delivery-address').textContent = order.delivery_address;
+            document.getElementById('modal-total-amount').textContent = '₹' + order.total_amount;
+            document.getElementById('modal-delivery-notes').textContent = order.delivery_notes;
+            document.getElementById('modal-staff-name').textContent = order.staff_name;
+
+            // Update status with proper styling
+            const orderStatusElement = document.getElementById('modal-order-status');
+            orderStatusElement.innerHTML = `<span class="status status-${order.order_status.toLowerCase()}">
+                <i class="fas ${getStatusIcon(order.order_status)}"></i> ${order.order_status}
+            </span>`;
+
+            const deliveryStatusElement = document.getElementById('modal-delivery-status');
+            deliveryStatusElement.innerHTML = `<span class="status status-${order.delivery_status.toLowerCase().replace(' ', '-')}">
+                <i class="fas ${getStatusIcon(order.delivery_status)}"></i> ${order.delivery_status}
+            </span>`;
+
+            // Update order items
+            const itemsTable = document.getElementById('modal-order-items');
+            itemsTable.innerHTML = '';
+            order.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${item.price}</td>
+                    <td>₹${item.total}</td>
+                `;
+                itemsTable.appendChild(row);
+            });
+
+            // Show modal
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'Pending': return 'fa-clock';
+                case 'Processing': return 'fa-cog';
+                case 'Shipped': return 'fa-shipping-fast';
+                case 'Out for Delivery': return 'fa-truck';
+                case 'Delivered': return 'fa-check-circle';
+                case 'Cancelled': return 'fa-times-circle';
+                default: return 'fa-info-circle';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        function printOrderDetails() {
+            // In a real app, you would implement proper printing
+            alert('Printing order details...');
+            // window.print(); // This would print the whole page
+        }
+
+        // Close modal when clicking outside the content
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+{% endblock %}

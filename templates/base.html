@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shreeji Stationery{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css_files/Homepage.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+            transition: right 0.3s ease;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .sidebar ul li:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .user-profile {
+            cursor: pointer;
+        }
+
+        /* Search suggestions dropdown */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+        }
+
+        .search-suggestions.show {
+            display: block;
+        }
+
+        .search-suggestion-item {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        .search-suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .search-container {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1 id="logo-text"><a href="{% url 'homepage' %}">Shreeji Stationery</a></h1>
+        </div>
+
+        <div class="search-container">
+            <form action="{% url 'search_products' %}" method="get" class="search-bar" id="searchForm">
+                <input type="text" id="searchBar-box" name="q" placeholder="Search for products..."
+                    value="{{ query|default:'' }}" autocomplete="off">
+                <button type="submit" class="search-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+            <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+
+        <div class="location">
+            <p id="deliver-to">Deliver To,</p>
+            <i class="fa-solid fa-location-dot"></i>
+            <p id="ahmedabad">Ahmedabad</p>
+        </div>
+
+        <div class="cart">
+            <a href="{% url 'cart'%}">
+                <i class="fa-solid fa-cart-shopping"></i>
+                {% if cart_count and cart_count > 0 %}
+                <span class="cart-count">{{ cart_count }}</span>
+                {% endif %}
+            </a>
+        </div>
+
+        {% if first_letter_of_name %}
+        <div class="user-profile" onclick="toggleSidebar()">
+            <p class="name_letter">{{first_letter_of_name}}</p>
+        </div>
+        {% else %}
+        <div class="user-profile" onclick="toggleSidebar()">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        {% endif %}
+    </header>
+
+    <nav>
+        <a href="{% url 'homepage' %}">Home</a>
+        <a href="{% url 'aboutUs' %}">About Us</a>
+        <a href="{% url 'contact_us' %}">Contact Us</a>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <!-- Your footer content here -->
+    </footer>
+
+    {% if first_letter_of_name %}
+    <div class="sidebar" id="sidebar">
+        <h2>User Menu</h2>
+        <ul>
+            <li><a href="{% url 'user_profile' %}">Manage Profile</a></li>
+            <li><a href="{% url 'user_orders' %}">Orders</a></li>
+            <li><a href="{% url 'user_settings' %}">Settings</a></li>
+            <li><a href="{% url 'user_messages' %}">Your Messages</a></li>
+            <li class="logoutBtn"><a href="{% url 'user_logout' %}">
+                    <p id="logoutBtn">Logout</p>
+                </a></li>
+        </ul>
+    </div>
+    {% else %}
+    <div class="sidebar" id="sidebar">
+        <h2>User Menu</h2>
+        <ul>
+            <li><a href="{% url 'login' %}">
+                    <p id="loginBtn">Login</p>
+                </a></li>
+            <li><a href="{% url 'register' %}">
+                    <p id="registerBtn">Register</p>
+                </a></li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <script>
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close sidebar when clicking outside
+        window.addEventListener('click', function (e) {
+            const sidebar = document.getElementById('sidebar');
+            const profile = document.querySelector('.user-profile');
+            if (!sidebar.contains(e.target) && !profile.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchBar-box');
+            const searchForm = document.getElementById('searchForm');
+            const searchSuggestions = document.getElementById('searchSuggestions');
+
+            if (searchInput) {
+                // Live search suggestions
+                searchInput.addEventListener('input', function () {
+                    const query = this.value.trim();
+                    if (query.length > 2) {
+                        fetchSearchSuggestions(query);
+                    } else {
+                        searchSuggestions.classList.remove('show');
+                    }
+                });
+
+                // Prevent empty searches
+                searchForm.addEventListener('submit', function (e) {
+                    if (searchInput.value.trim() === '') {
+                        e.preventDefault();
+                        searchInput.focus();
+                    }
+                });
+
+                // Click outside to close suggestions
+                document.addEventListener('click', function (e) {
+                    if (!searchForm.contains(e.target)) {
+                        searchSuggestions.classList.remove('show');
+                    }
+                });
+            }
+
+            function fetchSearchSuggestions(query) {
+                fetch(`/search/suggestions/?q=${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.suggestions && data.suggestions.length > 0) {
+                            renderSuggestions(data.suggestions);
+                        } else {
+                            searchSuggestions.classList.remove('show');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching suggestions:', error);
+                        searchSuggestions.classList.remove('show');
+                    });
+            }
+
+            function renderSuggestions(suggestions) {
+                searchSuggestions.innerHTML = '';
+                suggestions.forEach(suggestion => {
+                    const item = document.createElement('div');
+                    item.className = 'search-suggestion-item';
+                    item.textContent = suggestion;
+                    item.addEventListener('click', function () {
+                        searchInput.value = suggestion;
+                        searchForm.submit();
+                    });
+                    searchSuggestions.appendChild(item);
+                });
+                searchSuggestions.classList.add('show');
+            }
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

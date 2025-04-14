@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Page</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4bb543;
+            --error-color: #ff3333;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
+        .order-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .product-image {
+            flex: 1 1 300px;
+            min-height: 300px;
+            background: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+            border-radius: 8px;
+        }
+
+        .product-image:hover img {
+            transform: scale(1.03);
+        }
+
+        .product-details {
+            flex: 2 1 500px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .product-details h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .price-tag {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .detail-item {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .detail-item i {
+            margin-right: 10px;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-top: 3px;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            min-width: 100px;
+        }
+
+        .detail-value {
+            color: #555;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        form {
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #e51779;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #3fa238;
+        }
+
+        #deliveryAddressSection {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            min-height: 100px;
+            font-family: inherit;
+            transition: var(--transition);
+            resize: vertical;
+        }
+
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .payment-options {
+            display: none;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .payment-option input {
+            margin-right: 1rem;
+            transform: scale(1.2);
+        }
+
+        .payment-icon {
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .payment-label {
+            font-weight: 500;
+        }
+
+        .payment-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-container {
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .message i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .success {
+            background-color: rgba(75, 181, 67, 0.2);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .error {
+            background-color: rgba(255, 51, 51, 0.2);
+            color: var(--error-color);
+            border-left: 4px solid var(--error-color);
+        }
+
+        .not-found {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .not-found i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .continue-shopping {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .order-container {
+                flex-direction: column;
+            }
+
+            .product-image {
+                min-height: 200px;
+            }
+
+            .product-details {
+                padding: 1.5rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .product-details h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .product-details {
+                padding: 1rem;
+            }
+
+            .btn {
+                padding: 0.7rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-shopping-cart"></i> Order Details</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        {% if product %}
+        <div class="order-container">
+            <div class="product-image">
+                <img src="{{ product.productURL }}" alt="{{ product.product_name }}">
+            </div>
+
+            <div class="product-details">
+                <h2>{{ product.product_name }}</h2>
+                <div class="price-tag">₹ {{ product.price }}</div>
+
+                <div class="detail-item">
+                    <i class="fas fa-tag"></i>
+                    <div>
+                        <div class="detail-label">Category</div>
+                        <div class="detail-value">
+                            {{ product.category_name }}
+                            <span class="category-badge">{{ product.category_name }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value">{{ product.description }}</div>
+                    </div>
+                </div>
+
+                <form id="orderForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.product_id }}">
+
+                    <div class="form-group">
+                        <label for="quantity"><i class="fas fa-cubes"></i> Quantity</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" required>
+                    </div>
+
+                    <button type="button" id="placeOrderBtn" class="btn btn-accent" onclick="showDeliveryAddress()">
+                        <i class="fas fa-credit-card"></i> Proceed to Checkout
+                    </button>
+
+                    <!-- Delivery Address Section -->
+                    <div id="deliveryAddressSection" class="delivery-address">
+                        <div class="form-group">
+                            <label for="delivery_address"><i class="fas fa-map-marker-alt"></i> Delivery Address</label>
+                            <textarea id="delivery_address" name="delivery_address" rows="3"
+                                required>{{ delivery_address }}</textarea>
+                        </div>
+
+                        <!-- Payment Options -->
+                        <div id="paymentOptions" class="payment-options">
+                            <h3><i class="fas fa-wallet"></i> Payment Method</h3>
+
+                            <label class="payment-option">
+                                <input type="radio" name="payment_mode" value="Cash on Delivery" required>
+                                <div class="payment-icon"><i class="fas fa-money-bill-wave"></i></div>
+                                <div>
+                                    <div class="payment-label">Cash on Delivery</div>
+                                    <div class="payment-desc">Pay when you receive the product</div>
+                                </div>
+                            </label>
+
+                            <label class="payment-option">
+                                <input type="radio" name="payment_mode" value="UPI" required>
+                                <div class="payment-icon"><i class="fas fa-mobile-alt"></i></div>
+                                <div>
+                                    <div class="payment-label">UPI Payment</div>
+                                    <div class="payment-desc">Pay instantly using UPI apps</div>
+                                </div>
+                            </label>
+
+                            <button type="submit" class="btn btn-block" onclick="showSpinnerAndSubmit(event)">
+                                <i class="fas fa-check-circle"></i> Confirm Order
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading Animation -->
+                    <div id="loading">
+                        <div class="spinner"></div>
+                        <h3>Processing your order...</h3>
+                        <p>Please wait while we confirm your purchase</p>
+                    </div>
+
+                    <!-- Message Section -->
+                    {% if message %}
+                    <div class="message-container">
+                        <div class="message {% if success %}success{% else %}error{% endif %}">
+                            <i
+                                class="fas {% if success %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    </div>
+
+                    <!-- Continue Shopping Button (shown only on success) -->
+                    {% if success %}
+                    <div class="continue-shopping">
+                        <a href="/" class="btn btn-success">
+                            <i class="fas fa-shopping-bag"></i> Continue Shopping
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="not-found">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Product Not Found</h2>
+            <p>We couldn't find the product you're looking for.</p>
+            <a href="/" class="btn" style="margin-top: 1rem;">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showDeliveryAddress() {
+            document.getElementById("deliveryAddressSection").style.display = "block";
+            document.getElementById("paymentOptions").style.display = "block";
+            document.getElementById("placeOrderBtn").style.display = "none";
+
+            // Smooth scroll to the delivery address section
+            document.getElementById("deliveryAddressSection").scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        function showSpinnerAndSubmit(event) {
+            event.preventDefault();
+            document.getElementById("loading").style.display = "flex";
+
+            // Optional: Add a small delay to ensure spinner is visible
+            setTimeout(function () {
+                document.getElementById("orderForm").submit();
+            }, 800);
+        }
+    </script>
+</body>
+
+</html>

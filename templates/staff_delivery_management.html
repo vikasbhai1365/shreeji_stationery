@@ -1,0 +1,236 @@
+{% extends 'staff_base.html' %}
+
+{% block title %}Delivery Management{% endblock %}
+
+{% block header %}Delivery Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delivery-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .delivery-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .delivery-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .delivery-table th,
+    .delivery-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .delivery-table th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+
+    .delivery-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .delivery-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-dispatched {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .status-out {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-delivered {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .action-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .btn-dispatch {
+        background-color: var(--warning-color);
+        color: white;
+    }
+
+    .btn-dispatch:hover {
+        background-color: #e67e22;
+    }
+
+    .btn-out {
+        background-color: #9b59b6;
+        color: white;
+    }
+
+    .btn-out:hover {
+        background-color: #8e44ad;
+    }
+
+    .btn-deliver {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .btn-deliver:hover {
+        background-color: #27ae60;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--gray-color);
+    }
+
+    .empty-state i {
+        font-size: 50px;
+        margin-bottom: 20px;
+        color: #bdc3c7;
+    }
+
+    .address-cell {
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .delivery-table {
+            min-width: 600px;
+        }
+
+        .action-form {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delivery-container">
+    <div class="delivery-header">
+        <h2>Delivery Management</h2>
+        <a href="{% url 'staff_dashboard' %}" class="btn btn-back">Back to Dashboard</a>
+    </div>
+
+    <div class="table-responsive">
+        {% if deliveries %}
+        <table class="delivery-table">
+            <thead>
+                <tr>
+                    <th>Delivery ID</th>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for delivery in deliveries %}
+                <tr>
+                    <td>#{{ delivery.0 }}</td>
+                    <td>#{{ delivery.1 }}</td>
+                    <td>{{ delivery.2 }}</td>
+                    <td>
+                        <span class="status status-{{ delivery.3|lower|cut:' ' }}">
+                            {{ delivery.3 }}
+                        </span>
+                    </td>
+                    <td class="address-cell" title="{{ delivery.4 }}">
+                        {{ delivery.4 }}
+                    </td>
+                    <td>
+                        {% if delivery.3 == 'Pending' %}
+                        <form method="POST" class="action-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="delivery_id" value="{{ delivery.0 }}">
+                            <button type="submit" name="action" value="dispatch" class="action-btn btn-dispatch">
+                                Dispatch
+                            </button>
+                        </form>
+                        {% elif delivery.3 == 'Dispatched' %}
+                        <form method="POST" class="action-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="delivery_id" value="{{ delivery.0 }}">
+                            <button type="submit" name="action" value="out" class="action-btn btn-out">
+                                Out for Delivery
+                            </button>
+                        </form>
+                        {% elif delivery.3 == 'Out for Delivery' %}
+                        <form method="POST" class="action-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="delivery_id" value="{{ delivery.0 }}">
+                            <button type="submit" name="action" value="deliver" class="action-btn btn-deliver">
+                                Mark as Delivered
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i>🚚</i>
+            <h3>No Deliveries Found</h3>
+            <p>There are currently no deliveries to display.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

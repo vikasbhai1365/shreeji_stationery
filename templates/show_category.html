@@ -1,0 +1,57 @@
+<html>
+
+<head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet " href="/static/css_files/show_category.css" />
+</head>
+
+<body>
+    <div class="container">
+        <a href="javascript:history.back()" class="backBtn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <h2 class="text-center mt-4">Category List</h2>
+
+        {% if categories %}
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th> Category ID</th>
+                    <th>Category Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ category.category_id }}</td>
+                    <td>{{ category.category_name }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <!-- Update form -->
+                            <form action="{% url 'update_or_delete_category' category.category_id %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="update" class="updateBtn">Edit</button>
+                            </form>
+                    
+                            <!-- Delete form -->
+                            <form action="{% url 'update_or_delete_category' category.category_id %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="delete" class="deleteBtn">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center">No Categories available.</p>
+        {% endif %}
+    </div>
+</body>
+
+
+</html>

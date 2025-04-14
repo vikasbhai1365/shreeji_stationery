@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Orders</title>
+    <link rel="stylesheet" href="/static/css_files/user_orders.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <a href="{% url 'homepage' %}" class="home-link">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+            <h1>Your Order History</h1>
+            <div class="header-actions">
+                <div class="order-filter">
+                    <select id="filter-orders">
+                        <option value="all">All Orders</option>
+                        <option value="pending">Pending</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="orders-main">
+        <div class="orders-container">
+            {% if orders %}
+            {% for order in orders %}
+            <div class="order-card" data-status="{{ order.order_status|lower }}">
+                <div class="order-image-container">
+                    <img src="{{ order.productURL }}" alt="{{ order.product_name }}" class="order-image">
+                    <span class="order-badge status-{{ order.order_status|lower }}">{{ order.order_status }}</span>
+                </div>
+                <div class="order-details">
+                    <h2 class="product-name">{{ order.product_name }}</h2>
+                    <div class="order-meta">
+                        <span><i class="fas fa-tag"></i> Order Id : {{ order.order_id }}</span>
+                        <span><i class="far fa-calendar-alt"></i> {{ order.order_date }}</span>
+                    </div>
+                    <div class="order-pricing">
+                        <div class="price-item">
+                            <span>Price:</span>
+                            <span>₹{{ order.price }}</span>
+                        </div>
+                        <div class="price-item">
+                            <span>Quantity:</span>
+                            <span>{{ order.quantity }}</span>
+                        </div>
+                        <div class="price-item total">
+                            <span>Total:</span>
+                            <span>₹{{ order.total_amount }}</span>
+                        </div>
+                    </div>
+                    <!-- <div class="order-actions">
+                        <button class="btn track-order"><i class="fas fa-map-marker-alt"></i> Track</button>
+                        <button class="btn reorder"><i class="fas fa-sync-alt"></i> Reorder</button>
+                    </div> -->
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="no-orders-container">
+                <div class="no-orders-illustration">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h2>No Orders Yet</h2>
+                <p>You haven't placed any orders with us yet.</p>
+                <a href="{% url 'homepage' %}" class="btn shop-now">Start Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        // Simple filter functionality
+        document.getElementById('filter-orders').addEventListener('change', function () {
+            const status = this.value;
+            const orderCards = document.querySelectorAll('.order-card');
+
+            orderCards.forEach(card => {
+                if (status === 'all' || card.dataset.status === status) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+   
+</body>
+
+</html>

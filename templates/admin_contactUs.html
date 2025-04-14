@@ -1,0 +1,343 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+    <title>Admin - Contact Messages</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c786c;
+            --primary-light: #90d26d;
+            --secondary: #004445;
+            --accent: #f8b400;
+            --light: #faf5e4;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --dark: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 95%;
+            margin: 30px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            
+        }
+
+        .titleName{
+            margin: 0;
+            color: var(--secondary);
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 300px;
+        }
+
+        .search-bar button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: var(--secondary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: rgba(44, 120, 108, 0.05);
+        }
+
+        .reply-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .reply-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .reply-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 120, 108, 0.2);
+        }
+
+        .reply-btn {
+            background-color: var(--success);
+            color: white;
+            padding: 0 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .reply-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .reply-message {
+            background-color: #e8f5e9;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 3px solid var(--success);
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        .message-text {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .badge-replied {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .search-bar input {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .reply-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2 class="titleName"><i class="fas fa-envelope"></i> Customer Messages</h2>
+            <!-- <div class="search-bar">
+                <input type="text" placeholder="Search messages...">
+                <button type="button"><i class="fas fa-search"></i></button>
+            </div> -->
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in messages %}
+                <tr>
+                    <td><strong>#{{ msg.0 }}</strong></td>
+                    <td>{{ msg.1 }}</td>
+                    <td>{{ msg.2 }}</td>
+                    <td>{{ msg.3|default:"-" }}</td>
+                    <td>{{ msg.4 }}</td>
+                    <td class="message-text">{{ msg.5 }}</td>
+                    <td>
+                        {% if msg.7 %}
+                        <span class="badge badge-replied"><i class="fas fa-check-circle"></i> Replied</span>
+                        {% else %}
+                        <span class="badge badge-pending"><i class="fas fa-clock"></i> Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if msg.7 %}
+                        <div class="reply-message">
+                            <strong>Your reply:</strong>
+                            <p>{{ msg.7 }}</p>
+                        </div>
+                        {% else %}
+                        <form action="{% url 'reply_message' msg.0 %}" method="POST" class="reply-form">
+                            {% csrf_token %}
+                            <input type="text" name="reply" class="reply-input" placeholder="Write a reply..." required>
+                            <button type="submit" class="reply-btn"><i class="fas fa-reply"></i> Reply</button>
+                        </form>
+                        {% endif %}
+                        <!-- Uncomment when delete functionality is ready
+                        <a href="#" class="delete-btn" onclick="return confirm('Are you sure?')">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                        -->
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No messages found</h3>
+                            <p>All customer messages will appear here</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Confirm before deleting
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                if (!confirm('Are you sure you want to delete this message?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Future enhancement: Search functionality
+        const searchInput = document.querySelector('.search-bar input');
+        searchInput.addEventListener('keyup', function () {
+            // Implement search functionality here
+            console.log('Searching for:', this.value);
+        });
+    </script>
+</body>
+{% endblock %}

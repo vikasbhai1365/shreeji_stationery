@@ -1,0 +1,701 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid delivery-dashboard">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="dashboard-title">
+                <i class="fas fa-truck mr-2"></i>Delivery Management System
+            </h2>
+            <div class="dashboard-stats row">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stat-card pending">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-content">
+                            <span class="stat-number">{{ stats.pending }}</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stat-card dispatched">
+                        <div class="stat-icon"><i class="fas fa-paper-plane"></i></div>
+                        <div class="stat-content">
+                            <span class="stat-number">{{ stats.dispatched }}</span>
+                            <span class="stat-label">Dispatched</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stat-card delivered">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-content">
+                            <span class="stat-number">{{ stats.delivered }}</span>
+                            <span class="stat-label">Delivered</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stat-card unassigned">
+                        <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                        <div class="stat-content">
+                            <span class="stat-number">{{ stats.unassigned }}</span>
+                            <span class="stat-label">Unassigned</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-list-ol mr-2"></i>Unassigned Orders
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool text-white" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in unassigned_orders %}
+                                <tr>
+                                    <td class="font-weight-bold">#{{ order.0 }}</td>
+                                    <td>{{ order.1 }}</td>
+                                    <td>₹{{ order.2 }}</td>
+                                    <td>
+                                        <a href="{% url 'assign_delivery' order_id=order.0 %}"
+                                            class="btn btn-sm btn-primary assign-btn">
+                                            <i class="fas fa-truck mr-1"></i> Assign
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="fas fa-check-circle fa-2x mb-2 text-success"></i><br>
+                                        All orders are assigned!
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-truck-loading mr-2"></i>Active Deliveries
+                    </h3>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 200px;">
+                            <input type="text" id="activeSearch" class="form-control"
+                                placeholder="Search deliveries...">
+                            <div class="input-group-append">
+                                <button class="btn btn-info">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="activeDeliveriesTable">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Delivery ID</th>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Staff</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for delivery in active_deliveries %}
+                                <tr class="delivery-row status-{{ delivery.7|lower }}">
+                                    <td class="font-weight-bold">#{{ delivery.0 }}</td>
+                                    <td>#{{ delivery.1 }}</td>
+                                    <td>{{ delivery.2 }}</td>
+                                    <td>{{ delivery.5|default:"-" }}</td>
+                                    <td>
+                                        <span class="badge status-badge 
+                                            {% if delivery.7|lower == 'pending' %}bg-warning
+                                            {% elif delivery.7|lower == 'dispatched' %}bg-info
+                                            {% elif delivery.7|lower == 'delivered' %}bg-success
+                                            {% else %}bg-secondary{% endif %}">
+                                            <i class="fas 
+                                                {% if delivery.7|lower == 'pending' %}fa-clock
+                                                {% elif delivery.7|lower == 'dispatched' %}fa-paper-plane
+                                                {% elif delivery.7|lower == 'delivered' %}fa-check-circle
+                                                {% else %}fa-question{% endif %} mr-1"></i>
+                                            {{ delivery.7|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if delivery.7|lower == 'pending' %}
+                                        <form method="post"
+                                            action="{% url 'update_delivery_status' delivery_id=delivery.0 %}"
+                                            class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="dispatched">
+                                            <button type="submit" class="btn btn-sm btn-info action-btn">
+                                                <i class="fas fa-paper-plane mr-1"></i> Dispatch
+                                            </button>
+                                        </form>
+                                        {% elif delivery.7|lower == 'dispatched' %}
+                                        <form method="post"
+                                            action="{% url 'update_delivery_status' delivery_id=delivery.0 %}"
+                                            class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="delivered">
+                                            <button type="submit" class="btn btn-sm btn-success action-btn">
+                                                <i class="fas fa-check-circle mr-1"></i> Deliver
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="fas fa-check-circle fa-2x mb-2 text-success"></i><br>
+                                        No active deliveries
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-history mr-2"></i>Delivery History (Last 50)
+                    </h3>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 200px;">
+                            <input type="text" id="historySearch" class="form-control" placeholder="Search history...">
+                            <div class="input-group-append">
+                                <button class="btn btn-success">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="deliveryHistoryTable">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Delivery ID</th>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Staff</th>
+                                    <th>Status</th>
+                                    <th>Delivered On</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for delivery in delivery_history %}
+                                <tr class="delivery-row status-{{ delivery.7|lower }}">
+                                    <td class="font-weight-bold">#{{ delivery.0 }}</td>
+                                    <td>#{{ delivery.1 }}</td>
+                                    <td>{{ delivery.2 }}</td>
+                                    <td>{{ delivery.5|default:"-" }}</td>
+                                    <td>
+                                        <span class="badge status-badge 
+                                            {% if delivery.7|lower == 'delivered' %}bg-success
+                                            {% else %}bg-secondary{% endif %}">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            {{ delivery.7|title }}
+                                        </span>
+                                    </td>
+                                    <td>{{ delivery.8|date:"d M Y" }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary view-details-btn"
+                                            data-delivery-id="{{ delivery.0 }}">
+                                            <i class="fas fa-eye mr-1"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-2x mb-2 text-secondary"></i><br>
+                                        No delivery history yet
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer clearfix bg-white">
+                    <div class="float-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary active">1</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">2</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">3</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delivery Details Modal -->
+<div class="modal fade" id="deliveryDetailsModal" tabindex="-1" role="dialog"
+    aria-labelledby="deliveryDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="deliveryDetailsModalLabel">
+                    <i class="fas fa-info-circle mr-2"></i>Delivery Details
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="deliveryDetailsContent">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-3">Loading delivery details...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times mr-1"></i> Close
+                </button>
+                <button type="button" class="btn btn-primary" id="printDeliveryDetails">
+                    <i class="fas fa-print mr-1"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .delivery-dashboard {
+        padding: 20px;
+        background-color: #f5f7fa;
+    }
+
+    .dashboard-title {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        font-weight: 600;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e6ed;
+    }
+
+    .stat-card {
+        border-radius: 10px;
+        color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: none;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+        font-size: 24px;
+        margin-right: 15px;
+        opacity: 0.8;
+    }
+
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-number {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+
+    .pending {
+        background: linear-gradient(135deg, #ff9a44, #ff6b6b);
+    }
+
+    .dispatched {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+
+    .delivered {
+        background: linear-gradient(135deg, #3bb78f, #0bab64);
+    }
+
+    .unassigned {
+        background: linear-gradient(135deg, #757f9a, #d7dde8);
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 15px 20px;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        border-top: none;
+        border-bottom: 1px solid #e9ecef;
+        font-weight: 600;
+        color: #495057;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 12px 15px;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 12px 15px;
+        border-top: 1px solid #f1f3f6;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .action-btn {
+        border-radius: 50px;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        min-width: 100px;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .assign-btn {
+        border-radius: 50px;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .view-details-btn {
+        border-radius: 50px;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .view-details-btn:hover {
+        background-color: #e9ecef;
+    }
+
+    .delivery-row.status-pending {
+        background-color: rgba(255, 193, 7, 0.05);
+    }
+
+    .delivery-row.status-dispatched {
+        background-color: rgba(23, 162, 184, 0.05);
+    }
+
+    .delivery-row.status-delivered {
+        background-color: rgba(40, 167, 69, 0.05);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .dashboard-stats .col-md-3 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-stats .col-md-3 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .card-header .card-tools .input-group {
+            width: 150px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card-header .card-tools {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .card-header .card-tools .input-group {
+            width: 100%;
+        }
+
+        .action-btn,
+        .assign-btn,
+        .view-details-btn {
+            min-width: auto;
+            padding: 5px 8px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    $(document).ready(function () {
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Search functionality for active deliveries
+        $("#activeSearch").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#activeDeliveriesTable tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        // Search functionality for delivery history
+        $("#historySearch").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#deliveryHistoryTable tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        // View delivery details
+        $(".view-details-btn").click(function () {
+            var deliveryId = $(this).data('delivery-id');
+            var modal = $("#deliveryDetailsModal");
+
+            // Show loading state
+            modal.find("#deliveryDetailsContent").html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-3">Loading delivery details...</p>
+                </div>
+            `);
+
+            modal.modal('show');
+
+            // Load delivery details via AJAX
+            $.ajax({
+                url: "{% url 'delivery_details' %}",
+                method: "GET",
+                data: { delivery_id: deliveryId },
+                success: function (response) {
+                    $("#deliveryDetailsContent").html(response);
+                },
+                error: function () {
+                    $("#deliveryDetailsContent").html(`
+                        <div class="alert alert-danger m-3">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Failed to load delivery details. Please try again.
+                        </div>
+                    `);
+                }
+            });
+        });
+
+        // Print delivery details
+        $("#printDeliveryDetails").click(function () {
+            var printContent = $("#deliveryDetailsContent").html();
+            var originalContent = $("body").html();
+
+            $("body").html(`
+                <div class="container p-4">
+                    <h2 class="mb-4">Delivery Details - Shreeji Stationery</h2>
+                    ${printContent}
+                    <div class="mt-4 text-muted small">
+                        Printed on ${new Date().toLocaleString()}
+                    </div>
+                </div>
+            `);
+
+            window.print();
+            $("body").html(originalContent);
+        });
+
+        // Confirmation before changing status
+        $("form[action*='update_delivery_status']").submit(function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var actionText = form.find('button[type="submit"]').text().trim();
+            var statusIcon = form.find('button i').attr('class');
+
+            Swal.fire({
+                title: 'Confirm ' + actionText + '?',
+                html: `<div class="text-center py-3">
+                          <i class="${statusIcon} fa-3x mb-3 text-${actionText === 'Dispatch' ? 'info' : 'success'}"></i>
+                          <p>Are you sure you want to mark this delivery as ${actionText.toLowerCase()}?</p>
+                       </div>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: actionText === 'Dispatch' ? '#17a2b8' : '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, ' + actionText.toLowerCase() + ' it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.unbind('submit').submit();
+                }
+            });
+        });
+
+        // Auto-refresh data every 30 seconds
+        var refreshInterval = setInterval(function () {
+            refreshDashboardData();
+        }, 30000);
+
+        // Manual refresh button (if you add one)
+        $(".refresh-btn").click(function () {
+            refreshDashboardData();
+        });
+
+        function refreshDashboardData() {
+            $.ajax({
+                url: "{% url 'delivery_dashboard' %}",
+                method: "GET",
+                data: { partial: true },
+                success: function (response) {
+                    // Update stats cards
+                    $(".dashboard-stats").html($(response).find(".dashboard-stats").html());
+
+                    // Update unassigned orders table
+                    $(".card:eq(0) .card-body").html($(response).find(".card:eq(0) .card-body").html());
+
+                    // Update active deliveries table
+                    $(".card:eq(1) .card-body").html($(response).find(".card:eq(1) .card-body").html());
+
+                    // Update delivery history table
+                    $(".card:eq(2) .card-body").html($(response).find(".card:eq(2) .card-body").html());
+
+                    // Show notification
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Dashboard data refreshed'
+                    });
+                },
+                error: function () {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Failed to refresh data'
+                    });
+                }
+            });
+        }
+
+        // Toast notification setup
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        // Initialize card collapse/expand
+        $('[data-card-widget="collapse"]').click(function () {
+            var card = $(this).closest('.card');
+            card.toggleClass('collapsed-card');
+            $(this).find('i').toggleClass('fa-minus fa-plus');
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --sidebar-bg: #2c3e50;
+            --sidebar-text: #ecf0f1;
+            --sidebar-hover: #34495e;
+            --header-bg: #ffffff;
+            --header-text: #2c3e50;
+            --content-bg: #f5f7fa;
+            --primary-btn: #3498db;
+            --danger-btn: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            background-color: var(--content-bg);
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            /* Allows scrolling if content exceeds viewport height */
+        }
+
+        .logo {
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+        }
+
+        .sidebar nav ul li a {
+            display: block;
+            padding: 15px 20px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: var(--sidebar-hover);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            /* Allows scrolling for content */
+        }
+
+        /* Button Styles */
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .visitsite-btn {
+            background-color: var(--primary-btn);
+            color: white;
+            margin-right: 10px;
+        }
+
+        .visitsite-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .logout-btn {
+            background-color: var(--danger-btn);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="logo">Shreeji Stationery</h2>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'user_page' %}">Users</a></li>
+                    <li><a href="{% url 'product_page' %}">Products</a></li>
+                    <li><a href="{% url 'category_page' %}">Category</a></li>
+                    <li><a href="{% url 'brand_page' %}">Brand</a></li>
+                    <li><a href="{% url 'color_page' %}">Color</a></li>
+                    <li><a href="{% url 'admin_orders' %}">Orders</a></li>
+                    <li><a href="{% url 'manage_delivery' %}">Manage Delivery</a></li>
+                    <li><a href="{% url 'admin_contact_messages' %}">Customer Messages</a></li>
+                    <li><a href="{% url 'reports' %}">Reports</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1>Welcome, Admin! {{admin_name}}</h1>
+                <div>
+                    <a href="{% url 'homepage' %}"><button class="visitsite-btn">Visit Site</button></a>
+                    <a href="{% url 'admin_logout_view' %}"><button class="logout-btn">Logout</button></a>
+                </div>
+            </header>
+
+            <!-- Dynamic Content -->
+            <section class="content">
+                {% block content %}
+                <!-- This will be replaced by child templates -->
+                {% endblock %}
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>

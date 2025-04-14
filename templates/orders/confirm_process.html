@@ -1,0 +1,7 @@
+<h1>Confirm Processing Order #{{ order_id }}</h1>
+<form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to process this order?</p>
+    <button type="submit">Yes</button>
+    <a href="{% url 'pending_orders' %}">Cancel</a>
+</form>

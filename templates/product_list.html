@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="/static/css_files/product_list.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        
+
+        /* Continue as needed */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="javascript:history.back()" class="backBtn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <h2>Product List</h2>
+
+        {% if products %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Color</th>
+                        <th>Size</th>
+                        <th>Brand</th>
+                        <th>Stock</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.product_id }}</td>
+                        <td>{{ product.pro_name }}</td>
+                        <td>{{ product.category_name }}</td>
+                        <td>${{ product.price }}</td>
+                        <td>{{ product.description|truncatechars:30 }}</td>
+                        <td>{{ product.color_name }}</td>
+                        <td>{{ product.size }}</td>
+                        <td>{{ product.brand_name }}</td>
+                        <td>{{ product.stock_quantity }}</td>
+                        <td>
+                            {% if product.image_url %}
+                            <img src="{{ product.image_url }}" alt="{{ product.pro_name }}" class="product-image">
+                            {% else %}
+                            <span class="no-image">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <!-- Update form -->
+                                <form action="{% url 'update_or_delete_product' product.product_id %}" method="POST"
+                                    style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" name="action" value="update" class="updateBtn">Edit</button>
+                                </form>
+
+                                <!-- Delete form -->
+                                <form action="{% url 'update_or_delete_product' product.product_id %}" method="POST"
+                                    style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" name="action" value="delete" class="deleteBtn">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="no-products">No products available in inventory.</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

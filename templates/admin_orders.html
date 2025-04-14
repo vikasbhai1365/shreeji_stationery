@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Orders</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+
+        select {
+            padding: 5px;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Admin - Manage Orders</h2>
+    <table>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer Name</th>
+            <th>Product</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.0 }}</td>
+            <td>{{ order.1 }}</td>
+            <td>{{ order.2 }}</td>
+            <td>${{ order.3 }}</td>
+            <td>
+                <form action="{% url 'update_order_status' order.0 %}" method="POST">
+                    {% csrf_token %}
+                    <select name="status">
+                        <option value="Pending" {% if order.4=="Pending" %}selected{% endif %}>Pending</option>
+                        <option value="Shipped" {% if order.4=="Shipped" %}selected{% endif %}>Shipped</option>
+                        <option value="Delivered" {% if order.4=="Delivered" %}selected{% endif %}>Delivered</option>
+                        <option value="Cancelled" {% if order.4=="Cancelled" %}selected{% endif %}>Cancelled</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

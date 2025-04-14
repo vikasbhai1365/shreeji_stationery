@@ -1,0 +1,350 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --primary: #2c786c;
+        --primary-light: #90d26d;
+        --secondary: #004445;
+        --accent: #f8b400;
+        --light: #faf5e4;
+        --success: #28a745;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        --info: #17a2b8;
+        --dark: #343a40;
+    }
+
+    .container {
+        max-width: 95%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    #table-title {
+        text-align: center;
+        color: var(--secondary);
+        margin-bottom: 25px;
+        font-size: 2rem;
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    #table-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background-color: var(--accent);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th {
+        background-color: var(--primary);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover {
+        background-color: rgba(44, 120, 108, 0.05);
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-processing {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .status-shipped {
+        background-color: #e2d4f0;
+        color: #4a1a8c;
+    }
+
+    .status-out {
+        background-color: #fff8e1;
+        color: #ff8f00;
+    }
+
+    .status-delivered {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-failed {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        background-color: white;
+        width: 100%;
+    }
+
+    select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(44, 120, 108, 0.2);
+    }
+
+    .delete-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+        background-color: var(--primary);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .delete-btn:hover {
+        background-color: var(--secondary);
+        transform: translateY(-2px);
+    }
+
+    .order-id {
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .amount {
+        font-weight: 600;
+        color: var(--secondary);
+    }
+
+    @media (max-width: 1200px) {
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        th, td {
+            white-space: nowrap;
+        }
+    }
+
+    /* Modal Styles (for future enhancement) */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .alert {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left: 4px solid var(--success);
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid var(--danger);
+    }
+</style>
+
+<div class="container">
+    <h2 id="table-title"><i class="fas fa-clipboard-list"></i> Order Management</h2>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+        <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'update_status' %}">
+        {% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Order Date</th>
+                    <th>Amount</th>
+                    <th>Delivery Address</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
+                    <th>Delivery Status</th>
+                    <th>Payment Method</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><span class="order-id">#{{ order.order_id }}</span></td>
+                    <td>{{ order.user_id }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td><span class="amount">₹{{ order.total_amount }}</span></td>
+                    <td>{{ order.delivery_address|truncatechars:20 }}</td>
+
+                    <!-- Payment Status -->
+                    <td>
+                        <input type="hidden" name="order_id_{{ order.order_id }}" value="{{ order.order_id }}">
+                        <select name="payment_status_{{ order.order_id }}" class="status-select">
+                            <option value="{{ order.payment_status }}" selected>
+                                <span class="status status-{{ order.payment_status|lower }}">
+                                    {{ order.payment_status }}
+                                </span>
+                            </option>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Failed">Failed</option>
+                        </select>
+                    </td>
+
+                    <!-- Order Status -->
+                    <td>
+                        <select name="order_status_{{ order.order_id }}" class="status-select">
+                            <option value="{{ order.order_status }}" selected>
+                                <span class="status status-{{ order.order_status|lower }}">
+                                    {{order.order_status }}
+                                </span>
+                            </option>
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </td>
+
+                    <!-- Delivery Status -->
+                    <td>
+                        <select name="delivery_status_{{ order.order_id }}" class="status-select">
+                            <option value="{{ order.delivery_status }}" selected>
+                                <span class="status status-{{ order.delivery_status|lower|cut:' ' }}">
+                                    {{ order.delivery_status }}
+                                </span>
+                            </option>
+                            <option value="Pending">Pending</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </td>
+
+                    <td>{{ order.payment_method }}</td>
+                    <td>
+                        <button type="submit" class="delete-btn">
+                            <i class="fas fa-sync-alt"></i> Update
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script>
+    // Add status classes to select options
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusSelects = document.querySelectorAll('.status-select');
+        
+        statusSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                // Update the visual appearance when status changes
+                const selectedOption = this.options[this.selectedIndex];
+                const status = selectedOption.value.toLowerCase().replace(' ', '-');
+                this.className = `status-select status-${status}`;
+            });
+            
+            // Initialize with current status
+            const currentStatus = select.options[select.selectedIndex].value.toLowerCase().replace(' ', '-');
+            select.classList.add(`status-${currentStatus}`);
+        });
+    });
+
+    // Future enhancement: View order details modal
+    function viewOrderDetails(orderId) {
+        // Implement modal view similar to previous example
+        alert('View details for order #' + orderId);
+    }
+</script>
+{% endblock %}

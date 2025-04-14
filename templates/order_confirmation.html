@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4bb543;
+            --error-color: #ff3333;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
+        .confirmation-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        .confirmation-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .confirmation-icon {
+            font-size: 4rem;
+            color: var(--success-color);
+            margin-bottom: 1rem;
+            animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-20px);
+            }
+
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .confirmation-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .confirmation-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .order-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9fafc;
+            border-radius: var(--border-radius);
+        }
+
+        .order-image {
+            flex: 1 1 200px;
+            min-height: 150px;
+            background: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .order-image img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        .order-details {
+            flex: 2 1 300px;
+        }
+
+        .order-details h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .price-tag {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+        }
+
+        .detail-item {
+            margin-bottom: 0.5rem;
+            display: flex;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .detail-value {
+            color: #555;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .info-card {
+            background: #f9fafc;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 0.8rem;
+        }
+
+        .info-label {
+            font-weight: 500;
+            min-width: 150px;
+        }
+
+        .info-value {
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #e51779;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #3fa238;
+        }
+
+        .btn-light {
+            background-color: #f0f2f5;
+            color: var(--dark-color);
+        }
+
+        .btn-light:hover {
+            background-color: #e0e3e7;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .actions .btn {
+            flex: 1 1 200px;
+        }
+
+        .order-number {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .confirmation-container {
+                padding: 1.5rem;
+            }
+
+            .confirmation-icon {
+                font-size: 3rem;
+            }
+
+            .confirmation-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .order-summary {
+                flex-direction: column;
+            }
+
+            .order-image {
+                min-height: 150px;
+            }
+
+            .info-row {
+                flex-direction: column;
+            }
+
+            .info-label {
+                min-width: 100%;
+                margin-bottom: 0.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .confirmation-container {
+                padding: 1rem;
+            }
+
+            .confirmation-header h2 {
+                font-size: 1.3rem;
+            }
+
+            .btn {
+                padding: 0.7rem 1.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-check-circle"></i> Order Confirmation</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="confirmation-container">
+            <div class="confirmation-header">
+                <div class="confirmation-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Thank You for Your Order!</h2>
+                <p>Your order has been placed successfully</p>
+                <div class="order-number">Order #{{ order.order_id }}</div>
+            </div>
+
+            <div class="order-summary">
+                <div class="order-image">
+                    <img src="{{ product.productURL }}" alt="{{ product.product_name }}">
+                </div>
+                <div class="order-details">
+                    <h3>{{ product.product_name }}</h3>
+                    <div class="price-tag">₹ {{ order.total_amount }}</div>
+                    <div class="detail-item">
+                        <div class="detail-label">Quantity:</div>
+                        <div class="detail-value">{{ order.quantity }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Order Date:</div>
+                        <div class="detail-value">{{ order.order_date }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value" style="color: var(--success-color); font-weight: 500;">Confirmed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <i class="fas fa-truck"></i> Delivery Information
+            </div>
+            <div class="info-card">
+                <div class="info-row">
+                    <div class="info-label">Delivery Address:</div>
+                    <div class="info-value">{{ order.delivery_address }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Estimated Delivery:</div>
+                    <div class="info-value">3-5 business days</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Contact Number:</div>
+                    <div class="info-value">{{ user.phone_number }}</div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <i class="fas fa-credit-card"></i> Payment Information
+            </div>
+            <div class="info-card">
+                <div class="info-row">
+                    <div class="info-label">Payment Method:</div>
+                    <div class="info-value">{{ order.payment_mode }}</div>
+                </div>
+                <div class="info-row">
+                <div class="info-label">Total Amount:</div>
+                <div class="info-value" style="font-weight: 600; color: var(--primary-color);">
+                    {% if order.total_amount %}
+                    ₹ {{ order.total_amount }}
+                    {% else %}
+                    Amount not available
+                    {% endif %}
+                </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Payment Status:</div>
+                    <div class="info-value" style="color: var(--success-color); font-weight: 500;">
+                        {% if order.payment_mode == 'Cash on Delivery' %}
+                        To be paid on delivery
+                        {% else %}
+                        Payment successful
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a href="/" class="btn btn-success">
+                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                </a>
+                <a href="{% url 'user_orders'%}" class="btn btn-light">
+                    <i class="fas fa-clipboard-list"></i> View All Orders
+                </a>
+                <a href="{% url 'download_invoice' order.order_id %}" class="btn btn-accent">
+                    <i class="fas fa-download"></i> Download Invoice
+                </a>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

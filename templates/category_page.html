@@ -1,0 +1,57 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="category-container">
+    <h1>Category Management</h1>
+    <div class="category-button-container">
+        <a href="{% url 'add_category' %}" class="category-btn">Add Category</a>
+        <a href="{% url 'show_category' %}" class="category-btn">Show Category</a>
+    </div>
+</div>
+
+<style>
+    .category-container {
+        padding: 30px;
+        background: linear-gradient(135deg, #f9f9f9, #e3e3e3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        margin: 100px auto;
+        /* Adjusted margin to move it lower */
+        max-width: 600px;
+        text-align: center;
+    }
+
+    .category-container h1 {
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .category-button-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .category-btn {
+        display: inline-block;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .category-btn:hover {
+        background: linear-gradient(135deg, #0056b3, #003f7f);
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Assign Delivery for Order #{{ order.0 }}</h2>
+    <p>Customer: {{ order.1 }}</p>
+    <p>Address: {{ order.2 }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="staff_id">Select Delivery Staff:</label>
+            <select class="form-control" id="staff_id" name="staff_id" required>
+                <option value="">-- Select Staff --</option>
+                {% for staff in staff_members %}
+                <option value="{{ staff.0 }}">{{ staff.1 }} ({{ staff.2 }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Assign Delivery</button>
+        <a href="{% url 'delivery_dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

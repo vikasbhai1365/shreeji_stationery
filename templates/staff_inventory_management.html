@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Inventory Management</title>
+</head>
+
+<body>
+    <h2>Inventory Management</h2>
+    <table border="1">
+        <tr>
+            <th>Product ID</th>
+            <th>Name</th>
+            <th>Stock</th>
+            <th>Reorder Level</th>
+            <th>Update Stock</th>
+        </tr>
+        {% for item in inventory %}
+        <tr>
+            <td>{{ item.0 }}</td>
+            <td>{{ item.1 }}</td>
+            <td>{{ item.2 }}</td>
+            <td>{{ item.3 }}</td>
+            <td>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ item.0 }}">
+                    <input type="number" name="quantity_change" placeholder="Change" required>
+                    <input type="text" name="reason" placeholder="Reason" required>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>
+</body>
+
+</html>

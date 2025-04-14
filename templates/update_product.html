@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Product</title>
+    <link rel="stylesheet" href="/static/css_files/update_product.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+
+<body>
+   
+    <h1>Update Product</h1>
+    <a href="javascript:history.back()" class="backBtn">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <form action="{% url 'update_productPage' product.product_id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div>
+            <label for="product_name">Product Name:</label>
+            <input type="text" id="product_name" name="pro_name" value="{{ product.pro_name }}" required>
+        </div>
+
+        <div>
+            <label for="size">Size:</label>
+            <input type="text" id="size" name="size" value="{{ product.size }}" required>
+        </div>
+
+        <div>
+            <label for="brand">Brand:</label>
+            <select id="brand_dropdown" name="brand" required>
+                <option value="">Select a brand</option>
+                {% for brand in brands %}
+                <option value="{{ brand.0 }}" {% if brand.0 == product.brand_id %}selected{% endif %}>{{ brand.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="color">Color:</label>
+            <select id="color_dropdown" name="color" required>
+                <option value="">Select a color</option>
+                {% for color in colors %}
+                <option value="{{ color.0 }}" {% if color.0 == product.color_id %}selected{% endif %}>{{ color.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" value="{{ product.price }}" required>
+        </div>
+
+        <div>
+            <label for="stock_quantity">Stock Quantity:</label>
+            <input type="number" id="stock_quantity" name="stock_quantity" value="{{ product.stock_quantity }}" required>
+        </div>
+
+        <div>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="2" required>{{ product.description }}</textarea>
+        </div>
+
+        <div>
+            <label for="category">Category:</label>
+            <select id="category_dropdown" name="category" required>
+                <option value="">Select a Category</option>
+                {% for category in categories %}
+                <option value="{{ category.0 }}" {% if category.0 == product.category_id %}selected{% endif %}>{{ category.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="image-upload-section">
+            <label for="product_image">Product Image:</label>
+            <div class="file-input-wrapper">
+                <label class="file-input-label">
+                    <span class="file-input-text">Click to upload new image or drag and drop</span>
+                    <input type="file" id="product_image" name="product_image" accept="image/*" onchange="updateFileName()">
+                </label>
+            </div>
+        </div>
+        
+            <!-- {% if product.productURL %}
+            <div class="current-image">
+                <p>Current Image:</p>
+                <img src="{{product.productURL }}" alt="{{product.pro_name}}" width="150">
+            </div>
+            {% endif %} -->
+        </div>
+
+        <button type="submit" style="background-color: green; color: white; padding: 10px; border: none; cursor: pointer;">
+            Apply Changes
+        </button>
+    </form>
+    <script>
+        function updateFileName() {
+            var fileInput = document.getElementById("product_image");
+            var fileText = document.querySelector(".file-input-text");
+
+            if (fileInput.files.length > 0) {
+                fileText.textContent = fileInput.files[0].name; // Show the selected file name
+            } else {
+                fileText.textContent = "Click to upload new image or drag and drop"; // Default text
+            }
+        }
+    </script>
+</body>
+</html>

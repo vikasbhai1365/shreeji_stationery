@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreeji Stationery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css_files/Homepage.css"/>
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-pencil-alt logo-icon"></i>
+            <h1 id="logo-text">Shreeji Stationery</h1>
+        </div>
+
+        <form action="{% url 'search_products' %}" method="GET" class="search-bar">
+            <input type="text" name="q" id="searchBar-box" placeholder="Search notebooks, pens, art supplies..."
+                required>
+            <button type="submit" class="search-icon">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+
+        <div class="header-actions">
+            <div class="location">
+                <i class="fas fa-location-dot"></i>
+                <div class="location-text">
+                    <span id="deliver-to">Deliver to</span>
+                    <span id="ahmedabad">Ahmedabad</span>
+                </div>
+            </div>
+
+            <div class="cart">
+                <a href="{% url 'cart'%}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">{{cartItemCount}}</span> <!-- Dynamic count would go here -->
+                </a>
+            </div>
+
+            {% if first_letter_of_name %}
+            <div class="user-profile" onclick="toggleSidebar()">
+                {{first_letter_of_name}}
+            </div>
+            {% else %}
+            <div class="user-profile" onclick="toggleSidebar()">
+                <i class="fas fa-user"></i>
+            </div>
+            {% endif%}
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'aboutUs' %}"><i class="fas fa-info-circle"></i> About Us</a>
+        <a href="{% url 'contact_us' %}"><i class="fas fa-envelope"></i> Contact</a>
+        <a href="#"><i class="fas fa-tag"></i> Offers</a>
+        <!-- <a href="#"><i class="fas fa-question-circle"></i> Help</a> -->
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h2>Premium Stationery for Work, School & Creativity</h2>
+            <p>Discover our curated collection of high-quality notebooks, pens, art supplies and more. Delivered to your
+                doorstep in Ahmedabad.</p>
+            <a href="#categories" class="hero-btn">Shop Now <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <h2 class="section-title" id="categories">Shop by Category</h2>
+
+    <div class="shop-container">
+        {% for category in categories %}
+        <div class="box">
+            <div class="box-content">
+                <a href="{% url 'userside_productPage' %}?category_id={{ category.category_id }}">
+                    <img src="{{ category.productURL }}" alt="{{ category.category_name }}" class="box-image">
+                    <h2>{{ category.category_name }}</h2>
+                    <p>Shop Now <i class="fas fa-chevron-right"></i></p>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- User Sidebar -->
+    {% if first_letter_of_name %}
+    <div class="sidebar" id="sidebar">
+        <h2><i class="fas fa-user-circle"></i> My Account</h2>
+        <ul>
+            <li><a href="{% url 'profile_view' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'user_orders' %}"><i class="fas fa-box"></i> My Orders</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'user_messages' %}"><i class="fas fa-envelope"></i> Messages</a></li>
+            <li class="logoutBtn"><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    {% else %}
+    <div class="sidebar" id="sidebar">
+        <h2><i class="fas fa-user-circle"></i> Welcome</h2>
+        <ul>
+            <li><a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            <li><a href="{%  url 'register'%}"><i class="fas fa-user-plus"></i> Register</a></li>
+            <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+        </ul>
+    </div>
+    {% endif %}
+
+
+    <!-- Footer Section -->
+    <footer
+        style="background-color: var(--primary-dark); color: var(--white); padding: 3rem 5% 1.5rem; margin-top: 3rem;">
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+            <!-- About Column -->
+            <div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-pencil-alt" style="color: var(--secondary);"></i>
+                    <span>Shreeji Stationery</span>
+                </h3>
+                <p style="opacity: 0.8; line-height: 1.7; margin-bottom: 1.5rem;">
+                    Premium office and school supplies delivered to your doorstep in Ahmedabad. Quality products for
+                    work,
+                    education, and creativity.
+                </p>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="#" style="color: var(--white); font-size: 1.2rem; transition: var(--transition);">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" style="color: var(--white); font-size: 1.2rem; transition: var(--transition);">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <!-- <a href="#" style="color: var(--white); font-size: 1.2rem; transition: var(--transition);">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" style="color: var(--white); font-size: 1.2rem; transition: var(--transition);">
+                        <i class="fab fa-linkedin"></i>
+                    </a> -->
+                </div>
+            </div>
+
+            <!-- Quick Links Column -->
+            <div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 1.2rem;">Quick Links</h3>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 0.8rem;">
+                        <a href="#"
+                            style="color: var(--light-gray); text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: var(--secondary);"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <a href="{% url 'aboutUs' %}"
+                            style="color: var(--light-gray); text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: var(--secondary);"></i>
+                            About Us
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <a href="{% url 'contact_us' %}"
+                            style="color: var(--light-gray); text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: var(--secondary);"></i>
+                            Contact
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <a href="#"
+                            style="color: var(--light-gray); text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: var(--secondary);"></i>
+                            Privacy Policy
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Categories Column -->
+            <div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 1.2rem;">Categories</h3>
+                <ul style="list-style: none;">
+                    {% for category in categories|slice:":5" %}
+                    <li style="margin-bottom: 0.8rem;">
+                        <a href="{% url 'userside_productPage' %}?category_id={{ category.category_id }}"
+                            style="color: var(--light-gray); text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: var(--secondary);"></i>
+                            {{ category.category_name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Contact Column -->
+            <div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 1.2rem;">Contact Us</h3>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 0.8rem;">
+                        <i class="fas fa-map-marker-alt" style="color: var(--secondary); margin-top: 0.2rem;"></i>
+                        <span style="opacity: 0.8;">Shreeji Stationery , Isanpur, Ahmedabad, Gujarat - 382443</span>
+                    </li>
+                    <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem;">
+                        <i class="fas fa-phone-alt" style="color: var(--secondary);"></i>
+                        <span style="opacity: 0.8;">+91 98765 43210</span>
+                    </li>
+                    <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem;">
+                        <i class="fas fa-envelope" style="color: var(--secondary);"></i>
+                        <span style="opacity: 0.8;">info@shreejistationery.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div
+            style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.5rem; text-align: center; opacity: 0.7; font-size: 0.9rem;">
+            <p>&copy; 2023 Shreeji Stationery. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+
+            // Disable scroll when sidebar is open
+            document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : 'auto';
+        }
+
+        // Close sidebar when clicking outside
+        document.getElementById('overlay').addEventListener('click', function () {
+            toggleSidebar();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animation for category boxes when they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.box').forEach(box => {
+            box.style.opacity = 0;
+            box.style.transform = 'translateY(20px)';
+            box.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(box);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Shreeji Stationery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a1b9a;
+            --primary-light: #9c4dcc;
+            --primary-dark: #38006b;
+            --secondary: #ffab00;
+            --accent: #00c853;
+            --light: #f5f5f5;
+            --dark: #212121;
+            --gray: #757575;
+            --light-gray: #e0e0e0;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+            --border-radius-sm: 6px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkout-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr;
+            margin: 20px 0;
+        }
+
+        .checkout-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .checkout-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .checkout-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .checkout-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .shipping-section, .payment-section {
+            background: var(--white);
+            border-radius: var(--border-radius-sm);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .order-summary {
+            background: var(--light);
+            border-radius: var(--border-radius-sm);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--light-gray);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .total-amount {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid var(--primary-light);
+        }
+
+        .confirm-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            margin-top: 20px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+        }
+
+        .confirm-btn i {
+            font-size: 1.2rem;
+        }
+
+        .payment-method {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary-light);
+        }
+
+        .payment-option i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .payment-option.active {
+            border-color: var(--primary);
+            background-color: rgba(106, 27, 154, 0.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            body {
+                padding: 10px;
+            }
+            
+            .checkout-content {
+                padding: 20px;
+                gap: 20px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+            
+            .confirm-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .checkout-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            input, textarea, select {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h2><i class="fas fa-shopping-bag"></i> Complete Your Order</h2>
+        </div>
+
+        <div class="checkout-content">
+            <div class="shipping-section">
+                <h3 class="section-title"><i class="fas fa-truck"></i> Shipping Information</h3>
+                
+                <form action="{% url 'process_order' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="address" value="{{ user_address }}">
+                    <input type="hidden" name="payment_method" value="Cash On delivery" id="paymentMethod">
+                    
+                    {% for item in selected_items %}
+                    <input type="hidden" name="selected_items" value="{{ item }}">
+                    {% endfor %}
+                    
+                    {% for qty in quantities %}
+                    <input type="hidden" name="quantities" value="{{ qty }}">
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" value="{{ user_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" value="{{ user_phone }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Shipping Address</label>
+                        <textarea id="address" name="address" required>{{ user_address }}</textarea>
+                    </div>
+            </div>
+
+            <div class="payment-section">
+                <h3 class="section-title"><i class="fas fa-credit-card"></i> Payment Method</h3>
+                
+                <div class="payment-method">
+                    <div class="payment-option active" onclick="selectPayment('Cash On delivery')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <div>
+                            <h4>Cash On Delivery</h4>
+                            <p>Pay when you receive your order</p>
+                        </div>
+                    </div>
+                    
+                    <!-- <div class="payment-option" onclick="selectPayment('UPI')">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>
+                            <h4>UPI Payment</h4>
+                            <p>Pay instantly with UPI</p>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="order-summary">
+                    <h3 class="section-title"><i class="fas fa-receipt"></i> Order Summary</h3>
+                    
+                    <div class="summary-item">
+                        <span>Subtotal:</span>
+                        <span id="subtotal-price">₹{{ subtotal }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Tax (10%):</span>
+                        <span id="tax-amount">₹0.00</span>
+                    </div>
+                    
+                    <div class="summary-item total-amount">
+                        <span>Total Amount:</span>
+                        <span id="total-price">₹0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="confirm-btn">
+                    <i class="fas fa-check-circle"></i> Confirm Order
+                </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateTotal() {
+            let subtotal = parseFloat(document.getElementById("subtotal-price").innerText.replace("₹", ""));
+            let tax = subtotal * 0.10;
+            let grandTotal = subtotal + tax;
+
+            document.getElementById("tax-amount").innerText = "₹" + tax.toFixed(2);
+            document.getElementById("total-price").innerText = "₹" + grandTotal.toFixed(2);
+        }
+
+        function selectPayment(method) {
+            document.getElementById("paymentMethod").value = method;
+            
+            // Update UI
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        window.onload = function() {
+            updateTotal();
+        };
+    </script>
+</body>
+
+</html>

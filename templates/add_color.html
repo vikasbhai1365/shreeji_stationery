@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Color</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="/static/css_files/add_color.css">
+</head>
+
+<body>
+    <h1>Add New Color</h1>
+    <a href="javascript:history.back()" class="backBtn">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <form action="{% url 'add_color' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- <div>
+            <label for="product_name">Color ID:</label>
+            <input type="text" id="product_name" name="product_name" required>
+        </div>
+       -->
+
+
+        <div>
+            <label for="color">Color Name:</label>
+            <input type="text" id="color_name" name="color_name" required>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <p id="error_msg">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <button type="submit"
+            style="background-color: green; color: white; padding: 10px; border: none; cursor: pointer;">
+            Add Color
+        </button>
+    </form>
+
+
+</body>
+
+</html>
