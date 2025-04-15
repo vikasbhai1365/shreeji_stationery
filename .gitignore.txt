@@ -1,0 +1,40 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment folders
+env/
+venv/
+.venv/
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# Environment variables and secret files
+.env
+*.env
+
+# Django specific
+*.log
+staticfiles/
+media/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Database files (if using SQLite — you're using MySQL, so it's okay)
+db.sqlite3
+
+# Compiled files
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Pycharm project files
+*.iml
